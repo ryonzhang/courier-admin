@@ -65,22 +65,30 @@ class AccountDetail extends PureComponent {
         detail.packages = d.data
         this.setState({ detail })
       })
+    this.handlePackageCancel()
   }
 
   handleAdd = async () => {
     let data
-    await fetch('http://localhost:8080/balance/add', {
-      method: 'POST',
-      body: JSON.stringify({
-        msisdn: this.state.detail.msisdn,
-        amount: this.state.inputValue,
-      }),
-    })
+    await fetch(
+      'http://localhost:3000/uvatel/balances/' + this.state.detail.msisdn,
+      {
+        method: 'PUT',
+        headers: {
+          'api-version': 4,
+          msisdn: this.state.detail.msisdn,
+          package: 'uvatel.lend.us',
+          'Sec-Fetch-Mode': 'cors',
+          amount: this.state.inputValue,
+        },
+      }
+    )
+    await fetch('http://localhost:8080/account/' + this.state.detail.msisdn)
       .then(response => {
         return response.json()
       })
       .then(d => {
-        data = d.data
+        data = d['data']
       })
     await fetch('http://localhost:8080/packages/' + data.msisdn)
       .then(response => {
@@ -93,18 +101,34 @@ class AccountDetail extends PureComponent {
   }
 
   handleDeduct = async () => {
-    await fetch('http://localhost:8080/balance/deduct', {
-      method: 'POST',
-      body: JSON.stringify({
-        msisdn: this.state.detail.msisdn,
-        amount: this.state.inputValue,
-      }),
-    })
+    let data
+    await fetch(
+      'http://localhost:3000/uvatel/balances/' + this.state.detail.msisdn,
+      {
+        method: 'PUT',
+        headers: {
+          'api-version': 4,
+          msisdn: this.state.detail.msisdn,
+          package: 'uvatel.lend.us',
+          'Sec-Fetch-Mode': 'cors',
+          amount: -this.state.inputValue,
+        },
+      }
+    )
+    await fetch('http://localhost:8080/account/' + this.state.detail.msisdn)
       .then(response => {
         return response.json()
       })
       .then(d => {
-        this.setState({ detail: d.data })
+        data = d['data']
+      })
+    await fetch('http://localhost:8080/packages/' + data.msisdn)
+      .then(response => {
+        return response.json()
+      })
+      .then(d => {
+        data.packages = d.data
+        this.setState({ detail: data })
       })
   }
 
@@ -118,6 +142,11 @@ class AccountDetail extends PureComponent {
   onChange = value => {
     this.setState({
       selectedPackage: value,
+    })
+  }
+  onChangeSlider = value => {
+    this.setState({
+      inputValue: value,
     })
   }
 
@@ -264,7 +293,7 @@ class AccountDetail extends PureComponent {
                   <Slider
                     min={1}
                     max={20}
-                    onChange={this.onChange}
+                    onChange={this.onChangeSlider}
                     value={typeof inputValue === 'number' ? inputValue : 0}
                   />
                 </Col>
@@ -274,7 +303,7 @@ class AccountDetail extends PureComponent {
                     max={20}
                     style={{ marginLeft: 16 }}
                     value={inputValue}
-                    onChange={this.onChange}
+                    onChange={this.onChangeSlider}
                   />
                 </Col>
               </Row>

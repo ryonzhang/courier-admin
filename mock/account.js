@@ -227,6 +227,7 @@ module.exports = {
     const { id } = req.params
     let data = queryArray(database, id, 'id')
     if(!mockMode){
+
       await fetch('http://localhost:8080/account/'+id)
         .then(response => {
           return response.json();
@@ -234,12 +235,35 @@ module.exports = {
         .then(d => {
           data= d['data']
         });
-      await fetch('http://localhost:8080/packages/'+data.msisdn)
+      await fetch('http://localhost:3000/uvatel/balances',{
+        method: 'GET',
+        headers:{
+          'api-version': 4,
+          'msisdn':data.msisdn,
+          'package': 'uvatel.lend.us',
+          'Sec-Fetch-Mode': 'cors'
+        }
+      })
+        .then(res => {
+          return res.json();
+        })
+        .then(d => {
+          data.core_balance= d[0].amount
+        });
+      await fetch('http://localhost:3000/uvatel/packages',{
+        method: 'GET',
+        headers:{
+          'api-version': 4,
+          'msisdn':data.msisdn,
+          'package': 'uvatel.lend.us',
+          'Sec-Fetch-Mode': 'cors'
+        }
+      })
         .then(response => {
           return response.json();
         })
         .then(d => {
-          data.packages= d['data']
+          data.packages= d
         });
       await fetch('http://localhost:8080/packages/')
         .then(response => {
