@@ -54,7 +54,6 @@ const database = [
 
   {
     id: '7',
-    breadcrumbParentId: '1',
     name: 'Package',
     zh: {
       name: '数据包'
@@ -78,6 +77,7 @@ const database = [
     },
     route: '/account/:id',
   },
+
   // {
   //   id: '21',
   //   menuParentId: '-1',

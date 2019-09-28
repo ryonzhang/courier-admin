@@ -12,7 +12,7 @@ const {
 } = api
 
 export default modelExtend(pageModel, {
-  namespace: 'package',
+  namespace: 'pack',
 
   state: {
     currentItem: {},

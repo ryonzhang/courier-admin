@@ -80,6 +80,7 @@ class Account extends PureComponent {
 
   get listProps() {
     const { dispatch, account, loading } = this.props
+    console.log(this.props)
     const { list, pagination, selectedRowKeys } = account
 
     return {

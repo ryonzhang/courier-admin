@@ -30,43 +30,47 @@ class List extends PureComponent {
 
     const columns = [
       {
-        title: <Trans>Avatar</Trans>,
-        dataIndex: 'avatar',
-        key: 'avatar',
+        title: <Trans>Product</Trans>,
+        dataIndex: 'image',
+        key: 'image',
         width: 72,
         fixed: 'left',
         render: text => <Avatar style={{ marginLeft: 8 }} src={text} />,
       },
       {
-        title: <Trans>Msisdn</Trans>,
-        dataIndex: 'msisdn',
-        key: 'msisdn',
+        title: <Trans>Name</Trans>,
+        dataIndex: 'name',
+        key: 'name',
       },
       {
-        title: <Trans>Active</Trans>,
-        dataIndex: 'active',
-        key: 'active',
-        render: text => <span>{text ? 'Active' : 'Inactive'}</span>,
+        title: <Trans>Total</Trans>,
+        dataIndex: 'total',
+        key: 'total',
       },
       {
-        title: <Trans>Core Balance</Trans>,
-        dataIndex: 'core_balance',
-        key: 'core_balance',
+        title: <Trans>Unit</Trans>,
+        dataIndex: 'unit',
+        key: 'unit',
       },
       {
-        title: <Trans>CreateTime</Trans>,
-        dataIndex: 'created_at',
-        key: 'created_at',
+        title: <Trans>Type</Trans>,
+        dataIndex: 'type',
+        key: 'type',
       },
       {
-        title: <Trans>UpdateTime</Trans>,
-        dataIndex: 'updated_at',
-        key: 'updated_at',
+        title: <Trans>Amount</Trans>,
+        dataIndex: 'amount',
+        key: 'amount',
       },
       {
-        title: <Trans>DeleteTime</Trans>,
-        dataIndex: 'deleted_at',
-        key: 'deleted_at',
+        title: <Trans>Expired Date</Trans>,
+        dataIndex: 'expiration',
+        key: 'expiration',
+        render: days => {
+          let date = new Date()
+          date.setDate(date.getDate() + days)
+          return <p>{date.toLocaleDateString()}</p>
+        },
       },
       {
         title: <Trans>Operation</Trans>,

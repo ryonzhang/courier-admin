@@ -80,6 +80,7 @@ class Package extends PureComponent {
 
   get listProps() {
     const { dispatch, pack, loading } = this.props
+    console.log('ryobn' + this.props)
     const { list, pagination, selectedRowKeys } = pack
 
     return {
@@ -154,6 +155,7 @@ class Package extends PureComponent {
 
   render() {
     const { pack } = this.props
+    console.log(this.props)
     const { selectedRowKeys } = pack
 
     return (
@@ -183,7 +185,7 @@ class Package extends PureComponent {
 }
 
 Package.propTypes = {
-  package: PropTypes.object,
+  pack: PropTypes.object,
   location: PropTypes.object,
   dispatch: PropTypes.func,
   loading: PropTypes.object,

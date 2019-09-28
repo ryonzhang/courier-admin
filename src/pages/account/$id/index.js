@@ -5,15 +5,18 @@ import {
   Badge,
   Modal,
   Button,
+  Select,
   Slider,
   Row,
   Col,
   InputNumber,
+  Collapse,
 } from 'antd'
 import { connect } from 'dva'
 import { Page } from 'components'
 import styles from './index.less'
-
+const { Panel } = Collapse
+const { Option } = Select
 @connect(({ accountDetail }) => ({ accountDetail }))
 class AccountDetail extends PureComponent {
   constructor(props) {
@@ -22,8 +25,10 @@ class AccountDetail extends PureComponent {
     this.state = {
       rendered: false,
       visible: false,
+      packageVisible: false,
       inputValue: 1,
       detail: props.accountDetail.data,
+      selectedPackage: null,
     }
   }
 
@@ -33,7 +38,37 @@ class AccountDetail extends PureComponent {
     })
   }
 
+  addPackage = () => {
+    this.setState({
+      packageVisible: true,
+    })
+  }
+
+  handleAddPackage = async () => {
+    await fetch(
+      'http://localhost:8080/account/' +
+        this.state.detail.msisdn +
+        '/package/' +
+        this.state.selectedPackage,
+      {
+        method: 'POST',
+      }
+    ).then(response => {
+      return response.json()
+    })
+    await fetch('http://localhost:8080/packages/' + this.state.detail.msisdn)
+      .then(response => {
+        return response.json()
+      })
+      .then(d => {
+        let detail = this.state.detail
+        detail.packages = d.data
+        this.setState({ detail })
+      })
+  }
+
   handleAdd = async () => {
+    let data
     await fetch('http://localhost:8080/balance/add', {
       method: 'POST',
       body: JSON.stringify({
@@ -45,7 +80,15 @@ class AccountDetail extends PureComponent {
         return response.json()
       })
       .then(d => {
-        this.setState({ detail: d.data })
+        data = d.data
+      })
+    await fetch('http://localhost:8080/packages/' + data.msisdn)
+      .then(response => {
+        return response.json()
+      })
+      .then(d => {
+        data.packages = d.data
+        this.setState({ detail: data })
       })
   }
 
@@ -68,14 +111,77 @@ class AccountDetail extends PureComponent {
   handleCancel = () => {
     this.setState({ visible: false })
   }
+
+  handlePackageCancel = () => {
+    this.setState({ packageVisible: false })
+  }
   onChange = value => {
     this.setState({
-      inputValue: value,
+      selectedPackage: value,
     })
   }
 
+  renderPackage = packages => {
+    if (!packages || packages.length === 0) return
+    const content = []
+    packages.forEach((pack, index) => {
+      content.push(
+        <Panel header={pack.package.name} key={index}>
+          <Descriptions title="Account Package Info" bordered>
+            <Descriptions.Item label="Total" span={3}>
+              {String(pack.total)}
+            </Descriptions.Item>
+            <Descriptions.Item label="Used" span={3}>
+              {!pack.used ? (
+                <Badge status="success" text="Unused" />
+              ) : (
+                <Badge status="error" text="Used" />
+              )}
+            </Descriptions.Item>
+            <Descriptions.Item label="Remaining" span={3}>
+              {String(pack.remaining)}
+            </Descriptions.Item>
+            <Descriptions.Item label="Unit" span={3}>
+              {String(pack.unit)}
+            </Descriptions.Item>
+            <Descriptions.Item label="Expired Time" span={3}>
+              {String(this.state.detail['expired_at'])}
+            </Descriptions.Item>
+          </Descriptions>
+        </Panel>
+      )
+    })
+    return <Collapse>{content}</Collapse>
+  }
+
+  renderPackageSelection = packages => {
+    if (!packages || packages.length === 0) return
+    const content = []
+    packages.forEach((pack, index) => {
+      content.push(
+        <Option value={pack.name} key={index}>
+          {pack.name}
+        </Option>
+      )
+    })
+    return (
+      <Select
+        showSearch
+        style={{ width: 200 }}
+        placeholder="Select a package"
+        optionFilterProp="children"
+        onChange={this.onChange}
+        filterOption={(input, option) =>
+          option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+        }
+      >
+        {content}
+      </Select>
+    )
+  }
+
   render() {
-    const { visible, inputValue } = this.state
+    const { visible, inputValue, packageVisible } = this.state
     console.log(this.state.detail['msisdn'])
     if (!this.state.rendered) {
       console.log('back')
@@ -115,6 +221,16 @@ class AccountDetail extends PureComponent {
           </Descriptions.Item>
           <Descriptions.Item label="Expired Time" span={3}>
             {String(this.state.detail['expired_at'])}
+          </Descriptions.Item>
+          <Descriptions.Item label="Packages" span={3}>
+            {this.renderPackage(this.state.detail['packages'])}
+            <Button
+              type="default"
+              style={{ marginTop: '30px' }}
+              onClick={this.addPackage}
+            >
+              Add Package
+            </Button>
           </Descriptions.Item>
         </Descriptions>
         <Modal
@@ -162,6 +278,26 @@ class AccountDetail extends PureComponent {
                   />
                 </Col>
               </Row>
+            </Descriptions.Item>
+          </Descriptions>
+        </Modal>
+        <Modal
+          visible={packageVisible}
+          title="Add Package"
+          onCancel={this.handlePackageCancel}
+          footer={[
+            <Button key="Submit" type="default" onClick={this.handleAddPackage}>
+              Submit
+            </Button>,
+          ]}
+        >
+          <Descriptions bordered>
+            <Descriptions.Item
+              className={styles.shortLabel}
+              label="Available Packages"
+              span={3}
+            >
+              {this.renderPackageSelection(this.state.detail['all_packages'])}
             </Descriptions.Item>
           </Descriptions>
         </Modal>

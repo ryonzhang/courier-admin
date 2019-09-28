@@ -160,37 +160,42 @@ module.exports = {
 
     newData.forEach(d=>d.avatar=randomAvatar())
 
-    for (let key in other) {
-      if ({}.hasOwnProperty.call(other, key)) {
-        newData = newData.filter(item => {
-          if ({}.hasOwnProperty.call(item, key)) {
-            if (key === 'address') {
-              return other[key].every(iitem => item[key].indexOf(iitem) > -1)
-            } else if (key === 'createTime') {
-              const start = new Date(other[key][0]).getTime()
-              const end = new Date(other[key][1]).getTime()
-              const now = new Date(item[key]).getTime()
-
-              if (start && end) {
-                return now >= start && now <= end
-              }
-              return true
-            }
-            return (
-              String(item[key])
-                .trim()
-                .indexOf(decodeURI(other[key]).trim()) > -1
-            )
-          }
-          return true
-        })
-      }
-    }
 
     res.status(200).json({
       data: newData.slice((page - 1) * pageSize, page * pageSize),
       total: newData.length,
     })
+  },
+
+  async[`POST ${ApiPrefix}/account`](req, res) {
+    const newData = req.body
+    newData.created_at = Mock.mock('@now')
+    newData.updated_at = Mock.mock('@now')
+    newData.expired_at = Mock.mock('@now')
+    newData.avatar =
+      newData.avatar ||
+      Mock.Random.image(
+        '100x100',
+        Mock.Random.color(),
+        '#757575',
+        'png',
+      )
+    newData.id = Mock.mock('@id')
+
+    await fetch('http://localhost:8080/account', {
+      method: 'POST',
+      body: JSON.stringify(newData),
+    })
+      .then(response => {
+        return response.json()
+      })
+      .then(d => {
+        console.log(d)
+      });
+
+    database.unshift(newData)
+
+    res.status(200).end()
   },
 
   [`POST ${ApiPrefix}/accounts/delete`](req, res) {
@@ -229,6 +234,22 @@ module.exports = {
         .then(d => {
           data= d['data']
         });
+      await fetch('http://localhost:8080/packages/'+data.msisdn)
+        .then(response => {
+          return response.json();
+        })
+        .then(d => {
+          data.packages= d['data']
+        });
+      await fetch('http://localhost:8080/packages/')
+        .then(response => {
+          return response.json();
+        })
+        .then(d => {
+          data.all_packages= d['data']
+        });
+
+
     }
     if (data) {
       res.status(200).json(data)
