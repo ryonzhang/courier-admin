@@ -57,14 +57,15 @@ class Package extends PureComponent {
       visible: modalVisible,
       destroyOnClose: true,
       maskClosable: false,
-      confirmLoading: loading.effects[`package/${modalType}`],
+      confirmLoading: loading.effects[`pack/${modalType}`],
       title: `${
         modalType === 'create' ? i18n.t`Create Package` : i18n.t`Update Package`
       }`,
       centered: true,
       onOk: data => {
+        console.log(modalType)
         dispatch({
-          type: `package/${modalType}`,
+          type: `pack/${modalType}`,
           payload: data,
         }).then(() => {
           this.handleRefresh()
@@ -72,7 +73,7 @@ class Package extends PureComponent {
       },
       onCancel() {
         dispatch({
-          type: 'package/hideModal',
+          type: 'pack/hideModal',
         })
       },
     }
@@ -85,7 +86,7 @@ class Package extends PureComponent {
 
     return {
       dataSource: list,
-      loading: loading.effects['package/query'],
+      loading: loading.effects['pack/query'],
       pagination,
       onChange: page => {
         this.handleRefresh({
@@ -95,7 +96,7 @@ class Package extends PureComponent {
       },
       onDeleteItem: id => {
         dispatch({
-          type: 'package/delete',
+          type: 'pack/delete',
           payload: id,
         }).then(() => {
           this.handleRefresh({
@@ -108,7 +109,7 @@ class Package extends PureComponent {
       },
       onEditItem(item) {
         dispatch({
-          type: 'package/showModal',
+          type: 'pack/showModal',
           payload: {
             modalType: 'update',
             currentItem: item,
@@ -119,7 +120,7 @@ class Package extends PureComponent {
         selectedRowKeys,
         onChange: keys => {
           dispatch({
-            type: 'package/updateState',
+            type: 'pack/updateState',
             payload: {
               selectedRowKeys: keys,
             },
@@ -144,7 +145,7 @@ class Package extends PureComponent {
       },
       onAdd() {
         dispatch({
-          type: 'package/showModal',
+          type: 'pack/showModal',
           payload: {
             modalType: 'create',
           },

@@ -27,11 +27,12 @@ const TwoColProps = {
 @Form.create()
 class Filter extends Component {
   handleFields = fields => {
-    const { createTime } = fields
-    if (createTime.length) {
+    console.log(fields)
+    const { expired_at } = fields
+    if (expired_at.length) {
       fields.createTime = [
-        moment(createTime[0]).format('YYYY-MM-DD'),
-        moment(createTime[1]).format('YYYY-MM-DD'),
+        moment(expired_at[0]).format('YYYY-MM-DD'),
+        moment(expired_at[1]).format('YYYY-MM-DD'),
       ]
     }
     return fields
@@ -89,7 +90,7 @@ class Filter extends Component {
     return (
       <Row gutter={24}>
         <Col {...ColProps} xl={{ span: 4 }} md={{ span: 8 }}>
-          {getFieldDecorator('name', { initialValue: name })(
+          {getFieldDecorator('msisdn', { initialValue: name })(
             <Search
               placeholder={i18n.t`Search Name`}
               onSearch={this.handleSubmit}
@@ -121,13 +122,13 @@ class Filter extends Component {
           sm={{ span: 12 }}
           id="createTimeRangePicker"
         >
-          <FilterItem label={i18n.t`CreateTime`}>
-            {getFieldDecorator('createTime', {
+          <FilterItem label={i18n.t`Expired Time`}>
+            {getFieldDecorator('expired_at', {
               initialValue: initialCreateTime,
             })(
               <RangePicker
                 style={{ width: '100%' }}
-                onChange={this.handleChange.bind(this, 'createTime')}
+                onChange={this.handleChange.bind(this, 'expired_at')}
                 getCalendarContainer={() => {
                   return document.getElementById('createTimeRangePicker')
                 }}

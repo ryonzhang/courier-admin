@@ -208,15 +208,27 @@ class AccountDetail extends PureComponent {
       </Select>
     )
   }
+  sleep(milliseconds) {
+    var start = new Date().getTime()
+    for (var i = 0; i < 1e7; i++) {
+      if (new Date().getTime() - start > milliseconds) {
+        break
+      }
+    }
+  }
 
   render() {
     const { visible, inputValue, packageVisible } = this.state
     console.log(this.state.detail['msisdn'])
-    if (!this.state.rendered) {
+    if (
+      !this.state.detail.msisdn ||
+      this.state.detail.msisdn !== this.props.accountDetail.data.msisdn
+    ) {
       console.log('back')
-      console.log(this.props.accountDetail.data)
-      this.setState({ detail: this.props.accountDetail.data, rendered: true })
+      this.setState({ detail: this.props.accountDetail.data })
     }
+    // }
+
     return (
       <Page inner>
         <Descriptions title="Account Info" bordered>

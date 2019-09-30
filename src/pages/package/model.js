@@ -80,7 +80,7 @@ export default modelExtend(pageModel, {
     *create({ payload }, { call, put }) {
       const data = yield call(createPackage, payload)
       if (data.success) {
-        yield put({ type: 'hideModal' })
+        yield put({ type: 'showModal' })
       } else {
         throw data
       }

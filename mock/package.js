@@ -185,6 +185,36 @@ module.exports = {
     res.status(204).end()
   },
 
+  async[`POST ${ApiPrefix}/package`](req, res) {
+    const newData = req.body
+    newData.expired_at = Mock.mock('@now')
+    newData.image =
+      newData.image ||
+      Mock.Random.image(
+        '100x100',
+        Mock.Random.color(),
+        '#757575',
+        'png',
+        newData.name.substr(0, 1)
+      )
+    newData.id = Mock.mock('@id')
+
+    await fetch('http://localhost:8080/package', {
+      method: 'POST',
+      body: JSON.stringify(newData),
+    })
+      .then(response => {
+        return response.json()
+      })
+      .then(d => {
+        console.log(d)
+      });
+
+    database.unshift(newData)
+
+    res.status(200).end()
+  },
+
   [`POST ${ApiPrefix}/packages`](req, res) {
     const newData = req.body
     newData.createTime = Mock.mock('@now')

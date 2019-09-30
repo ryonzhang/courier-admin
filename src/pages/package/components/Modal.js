@@ -16,7 +16,7 @@ const formItemLayout = {
 }
 @withI18n()
 @Form.create()
-class UserModal extends PureComponent {
+class PackageModal extends PureComponent {
   handleOk = () => {
     const { item = {}, onOk, form } = this.props
     const { validateFields, getFieldsValue } = form
@@ -29,7 +29,6 @@ class UserModal extends PureComponent {
         ...getFieldsValue(),
         key: item.key,
       }
-      data.address = data.address.join(' ')
       onOk(data)
     })
   }
@@ -51,86 +50,48 @@ class UserModal extends PureComponent {
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label={i18n.t`NickName`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('nickName', {
-              initialValue: item.nickName,
-              rules: [
-                {
-                  required: true,
-                },
-              ],
-            })(<Input />)}
-          </FormItem>
-          <FormItem label={i18n.t`Gender`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('isMale', {
-              initialValue: item.isMale,
-              rules: [
-                {
-                  required: true,
-                  type: 'boolean',
-                },
-              ],
-            })(
-              <Radio.Group>
-                <Radio value>
-                  <Trans>Male</Trans>
-                </Radio>
-                <Radio value={false}>
-                  <Trans>Female</Trans>
-                </Radio>
-              </Radio.Group>
-            )}
-          </FormItem>
-          <FormItem label={i18n.t`Age`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('age', {
-              initialValue: item.age,
+          <FormItem label={i18n.t`Total`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('total', {
+              initialValue: item.total,
               rules: [
                 {
                   required: true,
                   type: 'number',
                 },
               ],
-            })(<InputNumber min={18} max={100} />)}
+            })(<InputNumber min={0} max={1000} />)}
           </FormItem>
-          <FormItem label={i18n.t`Phone`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('phone', {
-              initialValue: item.phone,
+          <FormItem label={i18n.t`Unit`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('unit', {
+              initialValue: item.unit,
               rules: [
                 {
                   required: true,
-                  pattern: /^1[34578]\d{9}$/,
-                  message: i18n.t`The input is not valid phone!`,
                 },
               ],
             })(<Input />)}
           </FormItem>
-          <FormItem label={i18n.t`Email`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('email', {
-              initialValue: item.email,
+          <FormItem label={i18n.t`Type`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('type', {
+              initialValue: item.total,
               rules: [
                 {
                   required: true,
-                  pattern: /^([a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(.[a-zA-Z0-9_-])+/,
-                  message: i18n.t`The input is not valid E-mail!`,
+                  type: 'number',
                 },
               ],
-            })(<Input />)}
+            })(<InputNumber min={0} max={1000} />)}
           </FormItem>
-          <FormItem label={i18n.t`Address`} hasFeedback {...formItemLayout}>
-            {getFieldDecorator('address', {
-              initialValue: item.address && item.address.split(' '),
+          <FormItem label={i18n.t`Amount`} hasFeedback {...formItemLayout}>
+            {getFieldDecorator('amount', {
+              initialValue: item.total,
               rules: [
                 {
                   required: true,
+                  type: 'number',
                 },
               ],
-            })(
-              <Cascader
-                style={{ width: '100%' }}
-                options={city}
-                placeholder={i18n.t`Pick an address`}
-              />
-            )}
+            })(<InputNumber min={0} max={1000} />)}
           </FormItem>
         </Form>
       </Modal>
@@ -138,10 +99,10 @@ class UserModal extends PureComponent {
   }
 }
 
-UserModal.propTypes = {
+PackageModal.propTypes = {
   type: PropTypes.string,
   item: PropTypes.object,
   onOk: PropTypes.func,
 }
 
-export default UserModal
+export default PackageModal
