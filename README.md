@@ -1,11 +1,7 @@
 
-<p align="center">
-  <a href="http://github.com/zuiidea/antd-admin">
-    <img alt="antd-admin" height="64" src="./docs/_media/logo.svg">
-  </a>
-</p>
 
-<h1 align="center">AntD Admin</h1>
+
+<h1 align="center">Courier Admin</h1>
 
 <div align="center">
 
